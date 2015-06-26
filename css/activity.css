@@ -1,0 +1,14 @@
+#main-toolbar #activity-button {
+  background-image: url(../activity/activity-icon.svg);
+}
+
+#main-toolbar #pen-button {
+  background-image: url(../icons/tool-pencil.svg);
+}
+
+#main-toolbar #stamps-button {
+  background-image: url(../icons/tool-stamp.svg);
+}
+
+#main-toolbar {
+}

@@ -23,6 +23,12 @@ var PaintApp = {
   elements: {},
 
   data: {
+    size: 5,
+    color: {
+      stroke: "#1500A7",
+      fill: "#ff0000"
+    },
+    items: [],
     tool: undefined,
     buddyColor: {
       stroke: "#1500A7",
@@ -34,19 +40,24 @@ var PaintApp = {
 
     //The pen mode is a simple drawing mode
     Pen: {
+      point: undefined,
       onMouseDown: function(event) {
-        path = new paper.Path();
-        path.strokeColor = 'red';
-        path.add(event.point);
-        p2 = new paper.Point();
-        p2.x = event.point.x + 1;
-        p2.y = event.point.y + 1;
-        path.add(p2);
-        paper.view.draw();
+        PaintApp.modes.Pen.point = event.point;
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+        ctx.strokeStyle = PaintApp.data.color.fill;
+        ctx.lineCap = 'round';
+        ctx.lineWidth = PaintApp.data.size;
+        ctx.moveTo(event.point.x + 1, event.point.y + 1);
+        ctx.lineTo(event.point.x, event.point.y);
+        ctx.stroke();
       },
       onMouseDrag: function(event) {
-        path.add(event.point);
-        paper.view.draw();
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(PaintApp.modes.Pen.point.x, PaintApp.modes.Pen.point.y);
+        ctx.lineTo(event.point.x, event.point.y);
+        ctx.stroke();
+        PaintApp.modes.Pen.point = event.point;
       },
       onMouseUp: function(event) {}
     },
@@ -55,23 +66,22 @@ var PaintApp = {
     Stamp: {
       onMouseDown: function(event) {
         return function() {
+          var ctx = PaintApp.elements.canvas.getContext("2d");
           var p = event.point;
           var url = window.location.href.split('/');
           url.pop();
-          url = url.join('/') + '/activity/activity-icon.svg';
+          url = url.join('/') + "/" + PaintApp.data.stamp;//'/activity/activity-icon.svg';
           var request = new XMLHttpRequest();
           request.open('GET', url, true);
           request.onload = function(e) {
+
             if (request.status === 200 || request.status === 0) {
               imgSRC = request.responseText;
-              imgSRC = changeColors(imgSRC, PaintApp.data.buddyColor.fill, PaintApp.data.buddyColor.stroke);
+              imgSRC = changeColors(imgSRC, PaintApp.data.color.fill, PaintApp.data.color.stroke);
               var img = new Image();
               img.onload = function() {
-                var raster = new paper.Raster(img);
-                raster.bounds.width = 80;
-                raster.bounds.height = 80;
-                raster.position = p;
-                paper.view.draw();
+                var size = PaintApp.data.size * 10;
+                ctx.drawImage(img, event.point.x - size / 2, event.point.y - size / 2, size, size);
               };
               img.src = "data:image/svg+xml;base64," + btoa(imgSRC);
             }
@@ -83,6 +93,5 @@ var PaintApp = {
       onMouseUp: function(event) {}
     }
   },
-
   switchMode: switchMode
 };

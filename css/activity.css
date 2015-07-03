@@ -1,41 +1,55 @@
+/*@media screen and (max-width: 1000px) {
+  .toolbar {
+    padding: 0 4px !important;
+  }
+}*/
+
+#main-toolbar {
+  overflow: hidden;
+}
 #main-toolbar #activity-button {
   background-image: url(../activity/activity-icon.svg);
 }
-
 #main-toolbar #pen-button {
   background-image: url(../icons/tool-pencil.svg);
 }
-
+#main-toolbar #eraser-button {
+  background-image: url(../icons/tool-eraser.svg);
+}
 #main-toolbar #stamps-button {
   background-image: url(../icons/tool-stamp.svg);
 }
-
 #main-toolbar #size-button {
   background-image: url(../icons/size-1.svg);
 }
-
 #main-toolbar #text-button {
   background-image: url(../icons/tool-write.svg);
 }
-
 #main-toolbar #undo-button {
   background-image: url(../icons/edit-undo.svg);
 }
-
 #main-toolbar #redo-button {
   background-image: url(../icons/edit-redo.svg);
 }
-
-#main-toolbar {
+#main-toolbar #drawings-button {
+  background-image: url(../icons/picture-icon.svg);
 }
-
+#main-toolbar #bucket-button {
+  background-image: url(../icons/tool-bucket.svg);
+}
+#main-toolbar #filters-button {
+  background-image: url(../icons/tool-effects.svg);
+}
+#main-toolbar #clear-button {
+  background-image: url(../icons/edit-clear.svg);
+}
+#main-toolbar {}
 .palette .colors {
   list-style-type: none;
   border-spacing: 0;
   border-collapse: collapse;
   margin: 0;
 }
-
 .palette .colors button {
   width: 44px;
   height: 44px;
@@ -44,18 +58,15 @@
   margin-left: 5.5px;
   margin-top: 5.5px;
 }
-
 .palette .colors tr:nth-last-child(1) button {
   margin-bottom: 5.5px;
 }
-
 .palette .stamps {
   list-style-type: none;
   border-spacing: 0;
   border-collapse: collapse;
   margin: 0;
 }
-
 .palette .stamps button {
   width: 44px;
   height: 44px;
@@ -64,7 +75,6 @@
   margin-left: 5.5px;
   margin-top: 5.5px;
 }
-
 .palette .stamps tr:nth-last-child(1) button {
   margin-bottom: 5.5px;
 }

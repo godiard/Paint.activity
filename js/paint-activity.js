@@ -2,7 +2,8 @@
 function paletteRemoveActiveClass() {
   var paletteElements = [
     PaintApp.elements.penButton,
-    PaintApp.elements.stampsButton
+    PaintApp.elements.stampsButton,
+    PaintApp.elements.textButton
   ];
 
   for (var i = 0; i < paletteElements.length; i++) {
@@ -23,6 +24,13 @@ function initGui() {
   PaintApp.data.tool = new paper.Tool();
   PaintApp.data.tool.distanceThreshold = 0;
   PaintApp.switchMode("Pen");
+
+  PaintApp.elements.textButton = document.getElementById('text-button');
+  PaintApp.elements.textButton.addEventListener("click", function() {
+    paletteRemoveActiveClass();
+    addActiveClassToElement(PaintApp.elements.textButton);
+    PaintApp.switchMode("Text");
+  });
 
   PaintApp.elements.stampsButton = document.getElementById('stamps-button');
   PaintApp.elements.stampsButton.addEventListener("click", function() {
@@ -51,7 +59,6 @@ function initGui() {
   }
 
   function onStampChange(event) {
-    console.log(event.detail.stamp)
     PaintApp.data.stamp = event.detail.stamp;
   }
 
@@ -103,5 +110,12 @@ function initGui() {
   var sizeButton = document.getElementById("size-button");
   sizeButton.addEventListener('click', onSizeClick);
 
+  var undoButton = document.getElementById("undo-button");
+  undoButton.addEventListener('click', undoCanvas);
+
+  var redoButton = document.getElementById("redo-button");
+  redoButton.addEventListener('click', redoCanvas);
+
   PaintApp.elements.penButton.click();
+  window.scrollTo(0, -1000)
 }

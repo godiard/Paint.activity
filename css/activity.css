@@ -14,6 +14,18 @@
   background-image: url(../icons/size-1.svg);
 }
 
+#main-toolbar #text-button {
+  background-image: url(../icons/tool-write.svg);
+}
+
+#main-toolbar #undo-button {
+  background-image: url(../icons/edit-undo.svg);
+}
+
+#main-toolbar #redo-button {
+  background-image: url(../icons/edit-redo.svg);
+}
+
 #main-toolbar {
 }
 

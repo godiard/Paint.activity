@@ -12,6 +12,8 @@ function initGui() {
   PaintApp.modes.Pen.initGui();
   PaintApp.modes.Bucket.initGui();
   PaintApp.modes.Stamp.initGui();
+  PaintApp.modes.Copy.initGui();
+  PaintApp.modes.Paste.initGui();
 
   PaintApp.palettes.filtersPalette.initGui();
   PaintApp.palettes.drawingsPalette.initGui();
@@ -20,6 +22,7 @@ function initGui() {
   PaintApp.buttons.sizeButton.initGui();
   PaintApp.buttons.clearButton.initGui();
   PaintApp.buttons.undoButton.initGui();
+  PaintApp.buttons.redoButton.initGui();
   PaintApp.buttons.redoButton.initGui();
 
   PaintApp.displayUndoRedoButtons();

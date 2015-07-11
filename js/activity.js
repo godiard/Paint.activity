@@ -24,6 +24,8 @@ define(function(require) {
   PaintApp.modes.Bucket = require("activity/modes/modes-bucket");
   PaintApp.modes.Text = require("activity/modes/modes-text");
   PaintApp.modes.Stamp = require("activity/modes/modes-stamp");
+  PaintApp.modes.Copy = require("activity/modes/modes-copy");
+  PaintApp.modes.Paste = require("activity/modes/modes-paste");
 
 
   require(['domReady!', 'sugar-web/datastore', 'paper-core', 'mustache'], function(doc, datastore, _paper, mustache) {

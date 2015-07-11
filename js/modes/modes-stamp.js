@@ -37,7 +37,7 @@ define([], function() {
 
   var Stamp = {
     initGui: initGui,
-    defaultSize: 200,
+    defaultSize: 80,
     onMouseDown: function(event) {
       return function() {
         PaintApp.modes.Stamp.releasedFinger = false;
@@ -60,7 +60,7 @@ define([], function() {
 
           if (request.status === 200 || request.status === 0) {
             var imgSRC = request.responseText;
-            imgSRC = changeColors(imgSRC, PaintApp.data.color.fill, PaintApp.data.color.stroke);
+            imgSRC = changeColors(imgSRC, PaintApp.data.color.fill, PaintApp.data.color.stroke)
             var element = document.createElement('img');
             element.style.backgroundRepeat = "no-repeat"
             element.style.backgroundSize = "contain"

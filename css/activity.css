@@ -1,8 +1,8 @@
-/*@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1000px) {
   .toolbar {
-    padding: 0 4px !important;
+    padding: 0 10px !important;
   }
-}*/
+}
 
 #main-toolbar {
   overflow: hidden;
@@ -40,6 +40,14 @@
 #main-toolbar #filters-button {
   background-image: url(../icons/tool-effects.svg);
 }
+#main-toolbar #copy-button {
+  background-image: url(../icons/tool-copy.svg);
+}
+
+#main-toolbar #paste-button {
+  background-image: url(../icons/tool-paste.svg);
+}
+
 #main-toolbar #clear-button {
   background-image: url(../icons/edit-clear.svg);
 }

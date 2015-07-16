@@ -31,7 +31,7 @@ define([], function() {
       element.style.whiteSpace = "nowrap"
       element.style.fontFamily = PaintApp.modes.Text.fontFamily;
       element.style.width = "auto"
-      element.style.lineHeight =   PaintApp.modes.Text.lineHeight;
+      element.style.lineHeight = PaintApp.modes.Text.lineHeight;
       element.style.fontSize = PaintApp.modes.Text.defaultSize + "px"
       element.style.opacity = "0.5"
       element.style.borderRadius = "0px"
@@ -42,7 +42,7 @@ define([], function() {
       var top = event.point.y + 55 + "px"
       element.style.left = left
       element.style.top = top
-      element.style.verticalAlign= "bottom";
+      element.style.verticalAlign = "bottom";
 
 
       document.body.appendChild(element);
@@ -77,18 +77,37 @@ define([], function() {
       if (!PaintApp.data.currentElement) {
         return;
       }
-      var ctx = PaintApp.elements.canvas.getContext("2d");
-      ctx.font = PaintApp.data.currentElement.element.style.fontSize + " " + PaintApp.modes.Text.fontFamily;
-      ctx.fillStyle = PaintApp.data.color.fill
+
       var txt = PaintApp.data.currentElement.element.innerHTML;
       var top = PaintApp.data.currentElement.element.getBoundingClientRect().top - 55 + PaintApp.data.currentElement.element.getBoundingClientRect().height
-      // ctx.textBaseline = "top"
+      var ctx = PaintApp.elements.canvas.getContext("2d");
+
+      ctx.font = PaintApp.data.currentElement.element.style.fontSize + " " + PaintApp.modes.Text.fontFamily;
+      ctx.fillStyle = PaintApp.data.color.fill
       ctx.textAlign = "start";
       ctx.fillText(
         txt,
         5 + PaintApp.data.currentElement.element.getBoundingClientRect().left,
         top
       );
+
+      if (PaintApp.data.isShared) {
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "text",
+            data: {
+              font: PaintApp.data.currentElement.element.style.fontSize + " " + PaintApp.modes.Text.fontFamily,
+              fillStyle: PaintApp.data.color.fill,
+              textAlign: "start",
+              text: txt,
+              left: 5 + PaintApp.data.currentElement.element.getBoundingClientRect().left,
+              top: top
+            }
+          }
+        })
+      }
+
       PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
       PaintApp.data.currentElement = undefined;
       PaintApp.saveCanvas();

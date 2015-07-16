@@ -39,6 +39,16 @@ define(["sugar-web/graphics/palette", "mustache"],
           break;
       }
       PaintApp.saveCanvas();
+
+      if (PaintApp.data.isShared) {
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "toDataURL",
+            data: PaintApp.elements.canvas.toDataURL()
+          }
+        })
+      }
     }
 
     function initGui() {

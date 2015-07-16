@@ -20,13 +20,13 @@ define(["sugar-web/graphics/palette", "mustache"],
       var colorPaletteFill = new PaintApp.palettes.colorPalette.ColorPalette(colorsButtonFill, undefined);
       colorPaletteFill.addEventListener('colorChange', onColorChangeFill);
       var colorInvokerFill = colorPaletteFill.getPalette().querySelector('.palette-invoker');
-      colorPaletteFill.setColor(0);
+      colorPaletteFill.setColor(1);
 
       var colorsButtonStroke = document.getElementById("colors-button-stroke");
       var colorPaletteStroke = new PaintApp.palettes.colorPalette.ColorPalette(colorsButtonStroke, undefined);
       colorPaletteStroke.addEventListener('colorChange', onColorChangeStroke);
       var colorInvokerStroke = colorPaletteStroke.getPalette().querySelector('.palette-invoker');
-      colorPaletteStroke.setColor(2);
+      colorPaletteStroke.setColor(18);
     }
 
     colorpalette.initGui = initGui;
@@ -58,25 +58,74 @@ define(["sugar-web/graphics/palette", "mustache"],
       var colorsData = {
         rows: [
           [{
-            color: "#ed2529"
+            color: "#FF2B34"
           }, {
-            color: "#69bc47"
+            color: "#E6000A"
           }, {
-            color: "#3c54a3"
+            color: "#B20008"
           }],
           [{
-            color: "#f57f25"
+            color: "#9A5200"
           }, {
-            color: "#0b6b3a"
+            color: "#C97E00"
           }, {
-            color: "#00a0c6"
+            color: "#FF8F00"
           }],
           [{
-            color: "#f6eb1a"
+            color: "#BE9E00"
           }, {
-            color: "#b93f94"
+            color: "#FFC169"
           }, {
-            color: "#5b4a9c"
+            color: "#F8E800"
+          }],
+          [{
+            color: "#FFFA00"
+          }, {
+            color: "#8BFF7A"
+          }, {
+            color: "#00EA11"
+          }],
+          [{
+            color: "#FFFA00"
+          }, {
+            color: "#8BFF7A"
+          }, {
+            color: "#00EA11"
+          }],
+          [{
+            color: "#008009"
+          }, {
+            color: "#807500"
+          }, {
+            color: "#00588C"
+          }],
+          [{
+            color: "#005FE4"
+          }, {
+            color: "#00A0FF"
+          }, {
+            color: "#BCCEFF"
+          }],
+          [{
+            color: "#BCCDFF"
+          }, {
+            color: "#D1A3FF"
+          }, {
+            color: "#AC32FF"
+          }],
+          [{
+            color: "#A700FF"
+          }, {
+            color: "#9900E6"
+          }, {
+            color: "#7F00BF"
+          }],
+          [{
+            color: "#5E008C"
+          }, {
+            color: "#FFADCE"
+          }, {
+            color: "#00B20D"
           }],
           [{
             color: "#000000"
@@ -89,7 +138,12 @@ define(["sugar-web/graphics/palette", "mustache"],
       };
 
       colorsElem.innerHTML = mustache.render(this.template, colorsData);
+
       this.setContent([colorsElem]);
+      colorsElem.parentNode.style.width = "180px"
+      colorsElem.parentNode.style.height = "160px"
+      colorsElem.parentNode.style.overflowY = "auto"
+      colorsElem.parentNode.style.overflowX = "hidden"
 
       // Pop-down the palette when a item in the menu is clicked.
 

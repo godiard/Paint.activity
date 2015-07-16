@@ -54,9 +54,30 @@ define([], function() {
           ctx.drawImage(PaintApp.data.currentElement.element,
             5 + PaintApp.data.currentElement.element.getBoundingClientRect().left,
             PaintApp.data.currentElement.element.getBoundingClientRect().top - 55 + 5);
+
+            if (PaintApp.data.isShared) {
+              var drawImage = {
+                src: PaintApp.data.currentElement.element.src,
+                left: PaintApp.data.currentElement.element.getBoundingClientRect().left,
+                top: PaintApp.data.currentElement.element.getBoundingClientRect().top - 55 + 5,
+                width: PaintApp.data.currentElement.element.getBoundingClientRect().width,
+                height: PaintApp.data.currentElement.element.getBoundingClientRect().height
+              }
+
+              PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+                user: PaintApp.data.presence.getUserInfo(),
+                content: {
+                  action: "drawImage",
+                  data: drawImage
+                }
+              })
+            }
+
           PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
           PaintApp.data.currentElement = undefined;
           PaintApp.saveCanvas();
+
+
         }
       }();
     },
@@ -94,6 +115,25 @@ define([], function() {
         PaintApp.data.currentElement.element.getBoundingClientRect().top - 55,
         PaintApp.data.currentElement.element.getBoundingClientRect().width,
         PaintApp.data.currentElement.element.getBoundingClientRect().height);
+
+        if (PaintApp.data.isShared) {
+          var drawImage = {
+            src: PaintApp.data.currentElement.element.src,
+            left: PaintApp.data.currentElement.element.getBoundingClientRect().left,
+            top: PaintApp.data.currentElement.element.getBoundingClientRect().top - 55,
+            width: PaintApp.data.currentElement.element.getBoundingClientRect().width,
+            height: PaintApp.data.currentElement.element.getBoundingClientRect().height
+          }
+
+          PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+            user: PaintApp.data.presence.getUserInfo(),
+            content: {
+              action: "drawImage",
+              data: drawImage
+            }
+          })
+        }
+
       PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
       PaintApp.data.currentElement = undefined;
       PaintApp.saveCanvas();

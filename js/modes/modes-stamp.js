@@ -11,6 +11,7 @@ define([], function() {
 
     function onStampChange(event) {
       PaintApp.data.stamp = event.detail.stamp;
+      PaintApp.data.stampBase = event.detail.stampBase;
       if (event.detail.proportionnal && event.detail.proportionnal === "true") {
         PaintApp.data.stampProportionnal = true
       } else {
@@ -37,6 +38,7 @@ define([], function() {
 
   var Stamp = {
     initGui: initGui,
+    changeColors: changeColors,
     defaultSize: 80,
     onMouseDown: function(event) {
       return function() {
@@ -89,9 +91,33 @@ define([], function() {
               ctx.drawImage(PaintApp.data.currentElement.element,
                 5 + PaintApp.data.currentElement.element.getBoundingClientRect().left,
                 PaintApp.data.currentElement.element.getBoundingClientRect().top - 55 + 5);
+
+              if (PaintApp.data.isShared) {
+                var drawImage = {
+                  stampBase: PaintApp.data.stampBase,
+                  color: {
+                    fill: PaintApp.data.color.fill,
+                    stroke: PaintApp.data.color.stroke
+                  },
+                  left: PaintApp.data.currentElement.element.getBoundingClientRect().left,
+                  top: PaintApp.data.currentElement.element.getBoundingClientRect().top - 55 + 5,
+                  width: PaintApp.data.currentElement.element.getBoundingClientRect().width,
+                  height: PaintApp.data.currentElement.element.getBoundingClientRect().height
+                }
+
+                PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+                  user: PaintApp.data.presence.getUserInfo(),
+                  content: {
+                    action: "drawStamp",
+                    data: drawImage
+                  }
+                })
+              }
+
               PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
               PaintApp.data.currentElement = undefined;
               PaintApp.saveCanvas();
+
             }
 
           }
@@ -133,6 +159,30 @@ define([], function() {
         PaintApp.data.currentElement.element.getBoundingClientRect().top - 55,
         PaintApp.data.currentElement.element.getBoundingClientRect().width,
         PaintApp.data.currentElement.element.getBoundingClientRect().height);
+
+      if (PaintApp.data.isShared) {
+        var drawImage = {
+          stampBase: PaintApp.data.stampBase,
+          color: {
+            fill: PaintApp.data.color.fill,
+            stroke: PaintApp.data.color.stroke
+          },
+          left: PaintApp.data.currentElement.element.getBoundingClientRect().left,
+          top: PaintApp.data.currentElement.element.getBoundingClientRect().top - 55,
+          width: PaintApp.data.currentElement.element.getBoundingClientRect().width,
+          height: PaintApp.data.currentElement.element.getBoundingClientRect().height
+        }
+
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "drawStamp",
+            data: drawImage
+          }
+        })
+      }
+
+
       PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
       PaintApp.data.currentElement = undefined;
       PaintApp.saveCanvas();

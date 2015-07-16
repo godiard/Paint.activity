@@ -114,9 +114,18 @@ define([], function() {
         PaintApp.modes.Bucket.lock = false
         return;
       }
-      floodfill(parseInt(event.point.x * window.devicePixelRatio), parseInt(event.point.y * window.devicePixelRatio), fillColor, ctx, ctx.canvas.width, ctx.canvas.height, 20);
+      floodfill(parseInt(event.point.x * window.devicePixelRatio), parseInt(event.point.y * window.devicePixelRatio), fillColor, ctx, ctx.canvas.width, ctx.canvas.height, 5);
       PaintApp.saveCanvas();
       PaintApp.modes.Bucket.lock = false
+      if (PaintApp.data.isShared) {
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "toDataURL",
+            data: PaintApp.elements.canvas.toDataURL()
+          }
+        })
+      }
     },
 
     onMouseDrag: function(event) {},

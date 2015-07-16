@@ -23,6 +23,28 @@ define([], function() {
       ctx.moveTo(event.point.x + 1, event.point.y + 1);
       ctx.lineTo(event.point.x, event.point.y);
       ctx.stroke();
+
+      if (PaintApp.data.isShared) {
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "path",
+            data: {
+              lineWidth: PaintApp.data.size,
+              lineCap: "round",
+              strokeStyle: PaintApp.data.color.fill,
+              from: {
+                x: event.point.x + 1,
+                y: event.point.y + 1
+              },
+              to: {
+                x: event.point.x,
+                y: event.point.y
+              }
+            }
+          }
+        })
+      }
     },
     onMouseDrag: function(event) {
       if (!PaintApp.modes.Pen.point) {
@@ -30,9 +52,34 @@ define([], function() {
       }
       var ctx = PaintApp.elements.canvas.getContext("2d");
       ctx.beginPath();
+      ctx.strokeStyle = PaintApp.data.color.fill;
+      ctx.lineWidth = PaintApp.data.size;
       ctx.moveTo(PaintApp.modes.Pen.point.x, PaintApp.modes.Pen.point.y);
       ctx.lineTo(event.point.x, event.point.y);
       ctx.stroke();
+
+      if (PaintApp.data.isShared) {
+        PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+          user: PaintApp.data.presence.getUserInfo(),
+          content: {
+            action: "path",
+            data: {
+              lineWidth: PaintApp.data.size,
+              lineCap: "round",
+              strokeStyle: PaintApp.data.color.fill,
+              from: {
+                x: PaintApp.modes.Pen.point.x,
+                y: PaintApp.modes.Pen.point.y
+              },
+              to: {
+                x: event.point.x,
+                y: event.point.y
+              }
+            }
+          }
+        })
+      }
+
       PaintApp.modes.Pen.point = event.point;
     },
     onMouseUp: function(event) {

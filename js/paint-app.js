@@ -50,10 +50,12 @@ define([], function() {
     };
 
     img.src = imgSrc;
+
     PaintApp.data.history.redo.push(imgSrc2);
     PaintApp.data.history.undo.pop()
 
     displayUndoRedoButtons();
+    return imgSrc
   }
 
   function redoCanvas() {
@@ -78,12 +80,21 @@ define([], function() {
     };
 
     img.src = imgSrc;
+
     PaintApp.data.history.undo.push(imgSrc);
     PaintApp.data.history.redo.pop()
     displayUndoRedoButtons();
+    return imgSrc;
   }
 
   function displayUndoRedoButtons() {
+    if (PaintApp.data.isShared && !PaintApp.data.isHost) {
+      PaintApp.elements.redoButton.style.opacity = "0.4"
+      PaintApp.elements.undoButton.style.opacity = "0.4"
+
+      return;
+    }
+
     if (PaintApp.data.history.redo.length == 0) {
       PaintApp.elements.redoButton.style.opacity = "0.4"
     } else {
@@ -117,6 +128,15 @@ define([], function() {
       PaintApp.data.history.undo = PaintApp.data.history.undo.slice(1)
     }
     displayUndoRedoButtons()
+
+    if (PaintApp.data.isShared && !PaintApp.data.isHost) {
+      PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+        user: PaintApp.data.presence.getUserInfo(),
+        content: {
+          action: "saveCanvas"
+        }
+      })
+    }
   }
 
   function handleCurrentFloatingElement() {
@@ -135,6 +155,133 @@ define([], function() {
     }
   }
 
+  function onDataReceived(msg) {
+    if (PaintApp.data.presence.getUserInfo().networkId === msg.user.networkId) {
+      return;
+    }
+    var userName = msg.user.name.replace('<', '&lt;').replace('>', '&gt;');
+    switch (msg.content.action) {
+      case "path":
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.strokeStyle = msg.content.data.strokeStyle;
+        ctx.lineCap = msg.content.data.lineCap;
+        ctx.lineWidth = msg.content.data.lineWidth;
+        ctx.moveTo(msg.content.data.from.x, msg.content.data.from.y);
+        ctx.lineTo(msg.content.data.to.x, msg.content.data.to.y);
+        ctx.stroke();
+        break;
+      case "text":
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+
+        ctx.font = msg.content.data.font;
+        ctx.fillStyle = msg.content.data.fillStyle
+        ctx.textAlign = msg.content.data.textAlign
+        ctx.fillText(
+          msg.content.data.text,
+          msg.content.data.left,
+          msg.content.data.top
+        );
+        break;
+      case "drawImage":
+
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+
+        var img = new Image()
+
+        img.onload = function() {
+          console.log("DRAW")
+          ctx.drawImage(img,
+            msg.content.data.left,
+            msg.content.data.top,
+            msg.content.data.width,
+            msg.content.data.height)
+        }
+        img.src = msg.content.data.src
+        break;
+      case "drawStamp":
+        var platform = "webkit";
+        var isFirefox = typeof InstallTrigger !== 'undefined'
+        if (isFirefox) {
+          platform = "gecko"
+        }
+        var ctx = PaintApp.elements.canvas.getContext("2d");
+        var stampURL = msg.content.data.stampBase.replace("{platform}", platform)
+
+        var url = window.location.href.split('/');
+        url.pop();
+        url = url.join('/') + "/" + stampURL;
+
+        var request = new XMLHttpRequest();
+        request.open('GET', url, true);
+        request.onload = function(e) {
+          if (request.status === 200 || request.status === 0) {
+            var stamp = PaintApp.modes.Stamp.changeColors(request.responseText, msg.content.data.color.fill, msg.content.data.color.stroke)
+            var img = new Image()
+
+            img.onload = function() {
+              console.log("DRAW")
+              ctx.drawImage(img,
+                msg.content.data.left,
+                msg.content.data.top,
+                msg.content.data.width,
+                msg.content.data.height)
+            }
+            img.src = "data:image/svg+xml;base64," + btoa(stamp)
+          }
+        }
+        request.send(null);
+
+        break;
+      case "entranceToDataURL":
+        if (PaintApp.data.isHost || PaintApp.data.entranceToDataURL) {
+          return;
+        }
+        PaintApp.data.entranceToDataURL = true
+        PaintApp.clearCanvas()
+        var img = new Image()
+        img.onload = function() {
+          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0);
+        }
+        img.src = msg.content.data
+        break;
+      case "toDataURL":
+        PaintApp.clearCanvas()
+        var img = new Image()
+        img.onload = function() {
+          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0);
+        }
+        img.src = msg.content.data
+        break;
+      case "clearCanvas":
+        PaintApp.clearCanvas()
+        break;
+      case "saveCanvas":
+        if (PaintApp.data.isHost) {
+          saveCanvas()
+        }
+        break;
+    }
+  }
+
+  function onSharedActivityUserChanged(msg) {
+    var userName = msg.user.name.replace('<', '&lt;').replace('>', '&gt;');
+    if (PaintApp.data.presence.getUserInfo().networkId === msg.user.networkId) {
+      return;
+    }
+
+    if (msg.move === 1) {
+      PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
+        user: PaintApp.data.presence.getUserInfo(),
+        content: {
+          action: "entranceToDataURL",
+          data: PaintApp.elements.canvas.toDataURL()
+        }
+      })
+    }
+    console.log(msg.move, userName);
+  }
+
   /* PaintApp, contains the context of the application */
   var PaintApp = {
     libs: {},
@@ -144,6 +291,7 @@ define([], function() {
     paletteModesButtons: [],
 
     data: {
+      isHost: true,
       history: {
         limit: 15,
         undo: [],
@@ -165,7 +313,9 @@ define([], function() {
     clearCanvas: clearCanvas,
     paletteRemoveActiveClass: paletteRemoveActiveClass,
     addActiveClassToElement: addActiveClassToElement,
-    handleCurrentFloatingElement: handleCurrentFloatingElement
+    handleCurrentFloatingElement: handleCurrentFloatingElement,
+    onDataReceived: onDataReceived,
+    onSharedActivityUserChanged: onSharedActivityUserChanged
   };
 
   return PaintApp;

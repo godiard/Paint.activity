@@ -7,6 +7,7 @@ define(function(require) {
 
   PaintApp.libs.activity = activity;
 
+  PaintApp.palettes.presencePalette = require("sugar-web/graphics/presencepalette");
   PaintApp.palettes.colorPalette = require("activity/palettes/color-palette");
   PaintApp.palettes.stampPalette = require("activity/palettes/stamp-palette");
   PaintApp.palettes.textPalette = require("activity/palettes/text-palette");
@@ -28,10 +29,11 @@ define(function(require) {
   PaintApp.modes.Paste = require("activity/modes/modes-paste");
 
 
-  require(['domReady!', 'sugar-web/datastore', 'paper-core', 'mustache'], function(doc, datastore, _paper, mustache) {
+  require(['domReady!', 'sugar-web/datastore', 'paper-core', 'mustache', 'lzstring'], function(doc, datastore, _paper, mustache, lzstring) {
 
     //Setup of the activity
     PaintApp.libs.mustache = mustache;
+    PaintApp.libs.lzstring = lzstring;
     activity.setup();
 
     //Get user color
@@ -42,15 +44,67 @@ define(function(require) {
     });
 
     //Fetch of the history
-    activity.getDatastoreObject().loadAsText(function(error, metadata, jsonData) {
-      var data = JSON.parse(jsonData);
-      if (data !== undefined) {
-        PaintApp.data.painting = data;
-      }
-    });
-
-    //We can launch the app
     initGui();
+
+    if (!window.top.sugar.environment.sharedId) {      
+      activity.getDatastoreObject().loadAsText(function(error, metadata, jsonData) {
+        var data = JSON.parse(jsonData);
+        if (data !== undefined) {
+          PaintApp.data.painting = data;
+        }
+      });
+    }
+
+    // Launched with a shared id, activity is already shared
+    if (window.top.sugar.environment.sharedId) {
+      PaintApp.data.isHost = false
+      PaintApp.buttons.undoButton.hideGui();
+      PaintApp.buttons.redoButton.hideGui();
+      PaintApp.displayUndoRedoButtons();
+      shareActivity();
+    }
+
   });
 
 });
+
+
+function shareActivity() {
+  var activity = PaintApp.libs.activity;
+  PaintApp.data.presence = activity.getPresenceObject(function(error, presence) {
+    // Unable to join
+    if (error) {
+      console.log("error")
+      return;
+    }
+
+    PaintApp.data.isShared = true;
+
+
+    // Store settings
+    userSettings = presence.getUserInfo();
+    console.log("connected")
+
+    // Not found, create a new shared activity
+    if (!window.top.sugar.environment.sharedId) {
+      presence.createSharedActivity('org.olpcfrance.PaintActivity', function(groupId) {});
+    }
+
+    // Show a disconnected message when the WebSocket is closed.
+    presence.onConnectionClosed(function(event) {
+      console.log(event)
+      console.log("Connection closed");
+    });
+
+    // Display connection changed
+    presence.onSharedActivityUserChanged(function(msg) {
+      PaintApp.onSharedActivityUserChanged(msg)
+    });
+
+    // Handle messages received
+    presence.onDataReceived(function(msg) {
+      PaintApp.onDataReceived(msg);
+
+    });
+  });
+}

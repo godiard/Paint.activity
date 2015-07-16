@@ -66,7 +66,7 @@ define(["sugar-web/graphics/palette", "mustache"],
         '<tr>' +
         '{{#.}}' +
         '<td>' +
-        '<button value="{{drawings}}" style="height:55px; width:55px; background-image: url({{ drawings }}); background-repeat: no-repeat; background-position: center; "></button>' +
+        '<button value="{{drawings}}" style="height:55px; width:55px; background-size: 55px 55px; background-image: url({{ drawings }}); background-repeat: no-repeat; background-position: center; "></button>' +
         '</td>' +
         '{{/.}}' +
         '</tr>' +

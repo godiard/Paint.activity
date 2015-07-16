@@ -15,6 +15,7 @@ define([], function() {
   /* Switch current drawing mode */
   function switchMode(newMode) {
     saveCanvas();
+    PaintApp.data.mode = newMode
     PaintApp.handleCurrentFloatingElement();
     PaintApp.data.tool.onMouseDown = PaintApp.modes[newMode].onMouseDown;
     PaintApp.data.tool.onMouseDrag = PaintApp.modes[newMode].onMouseDrag;
@@ -119,9 +120,18 @@ define([], function() {
   }
 
   function handleCurrentFloatingElement() {
+
     if (PaintApp.data.currentElement !== undefined) {
-      PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
-      PaintApp.data.currentElement = undefined;
+
+      if (PaintApp.data.currentElement.type != "copy/paste") {
+        PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
+        PaintApp.data.currentElement = undefined;
+      } else {
+        if (PaintApp.data.mode != "Copy" && PaintApp.data.mode != "Paste") {
+          PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
+          PaintApp.data.currentElement = undefined;
+        }
+      }
     }
   }
 

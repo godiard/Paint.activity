@@ -16,6 +16,12 @@ define([], function() {
     end: undefined,
 
     onMouseDown: function(event) {
+
+      if (PaintApp.data.currentElement) {
+        PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
+        PaintApp.data.currentElement = undefined;
+      }
+
       begin = event.point;
 
       var element = document.createElement('div');
@@ -24,6 +30,7 @@ define([], function() {
       element.style.width = "1px"
       element.style.height = "1px"
       element.style.opacity = "0.5"
+      element.style.pointerEvents = "none"
       element.style.borderRadius = "0px"
       element.style.border = "5px dotted #500"
 
@@ -37,7 +44,7 @@ define([], function() {
       element.style.left = parseInt(left) - element.getBoundingClientRect().width / 2 + "px"
       element.style.top = parseInt(top) - element.getBoundingClientRect().height / 2 + "px"
       PaintApp.data.currentElement = {
-        type: "text",
+        type: "copy/paste",
         element: element,
         startPoint: {
           x: parseInt(element.style.left) + element.getBoundingClientRect().width / 2,
@@ -85,15 +92,14 @@ define([], function() {
         canvas.height = height * window.devicePixelRatio
         canvas.getContext("2d").putImageData(imgData, 0, 0);
         imgData = canvas.toDataURL();
-        console.log(imgData)
         PaintApp.modes.Paste.dataImage = {
           width: width / window.devicePixelRatio,
           height: height / window.devicePixelRatio,
           data: imgData
         };
       }
-      PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
-      PaintApp.data.currentElement = undefined;
+
+      PaintApp.elements.pasteButton.click();
     }
 
   };

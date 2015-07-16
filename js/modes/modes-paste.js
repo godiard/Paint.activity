@@ -15,6 +15,12 @@ define([], function() {
     initGui: initGui,
     onMouseDown: function(event) {
       return function() {
+
+        if (PaintApp.data.currentElement) {
+          PaintApp.data.currentElement.element.parentElement.removeChild(PaintApp.data.currentElement.element);
+          PaintApp.data.currentElement = undefined;
+        }
+
         PaintApp.modes.Paste.releasedFinger = false;
         PaintApp.handleCurrentFloatingElement();
 
@@ -58,18 +64,23 @@ define([], function() {
       if (!PaintApp.data.currentElement) {
         return;
       }
-      var distanceX = Math.abs(event.point.x - PaintApp.data.currentElement.startPoint.x)
-      var distanceY = Math.abs(event.point.y - PaintApp.data.currentElement.startPoint.y + 55)
-      if (distanceX > distanceY) {
-        distance = distanceX;
-      } else {
-        distance = distanceY;
-      }
-      PaintApp.data.currentElement.element.style.width = PaintApp.modes.Paste.dataImage.width + PaintApp.modes.Paste.dataImage.width * distance / 30 + "px";
-      PaintApp.data.currentElement.element.style.height = PaintApp.modes.Paste.dataImage.height + PaintApp.modes.Paste.dataImage.height * distance / 30 + "px";
 
-      PaintApp.data.currentElement.element.style.left = PaintApp.data.currentElement.startPoint.x - PaintApp.data.currentElement.element.getBoundingClientRect().width / 2 + "px"
-      PaintApp.data.currentElement.element.style.top = PaintApp.data.currentElement.startPoint.y - PaintApp.data.currentElement.element.getBoundingClientRect().height / 2 + "px"
+      var left = event.point.x - PaintApp.modes.Paste.dataImage.width / 2 + "px";
+      var top = event.point.y + 55 - PaintApp.modes.Paste.dataImage.height / 2 + "px";
+
+      PaintApp.data.currentElement.element.style.left = left
+      PaintApp.data.currentElement.element.style.top = top
+      // var distanceX = Math.abs(event.point.x - PaintApp.data.currentElement.startPoint.x)
+      // var distanceY = Math.abs(event.point.y - PaintApp.data.currentElement.startPoint.y + 55)
+      // if (distanceX > distanceY) {
+      //   distance = distanceX;
+      // } else {
+      //   distance = distanceY;
+      // }
+      // PaintApp.data.currentElement.element.style.width = PaintApp.modes.Paste.dataImage.width + PaintApp.modes.Paste.dataImage.width * distance / 30 + "px";
+      // PaintApp.data.currentElement.element.style.height = PaintApp.modes.Paste.dataImage.height + PaintApp.modes.Paste.dataImage.height * distance / 30 + "px";
+      // PaintApp.data.currentElement.element.style.left = PaintApp.data.currentElement.startPoint.x - PaintApp.data.currentElement.element.getBoundingClientRect().width / 2 + "px"
+      // PaintApp.data.currentElement.element.style.top = PaintApp.data.currentElement.startPoint.y - PaintApp.data.currentElement.element.getBoundingClientRect().height / 2 + "px"
     },
     onMouseUp: function(event) {
       PaintApp.modes.Paste.releasedFinger = true;

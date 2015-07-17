@@ -7,6 +7,7 @@ define(function(require) {
 
   PaintApp.libs.activity = activity;
 
+  /* Fetching and storing of the palettes */
   PaintApp.palettes.presencePalette = require("sugar-web/graphics/presencepalette");
   PaintApp.palettes.colorPalette = require("activity/palettes/color-palette");
   PaintApp.palettes.stampPalette = require("activity/palettes/stamp-palette");
@@ -14,12 +15,13 @@ define(function(require) {
   PaintApp.palettes.drawingsPalette = require("activity/palettes/drawings-palette");
   PaintApp.palettes.filtersPalette = require("activity/palettes/filters-palette");
 
+  /* Fetching and storing of the buttons */
   PaintApp.buttons.sizeButton = require("activity/buttons/size-button");
   PaintApp.buttons.clearButton = require("activity/buttons/clear-button");
   PaintApp.buttons.undoButton = require("activity/buttons/undo-button");
   PaintApp.buttons.redoButton = require("activity/buttons/redo-button");
 
-
+  /* Fetching and storing of the modes */
   PaintApp.modes.Pen = require("activity/modes/modes-pen");
   PaintApp.modes.Eraser = require("activity/modes/modes-eraser");
   PaintApp.modes.Bucket = require("activity/modes/modes-bucket");
@@ -31,9 +33,11 @@ define(function(require) {
 
   require(['domReady!', 'sugar-web/datastore', 'paper-core', 'mustache', 'lzstring'], function(doc, datastore, _paper, mustache, lzstring) {
 
-    //Setup of the activity
+    /* Fetching and storing libraries */
     PaintApp.libs.mustache = mustache;
     PaintApp.libs.lzstring = lzstring;
+
+    //Setup of the activity
     activity.setup();
 
     //Get user color
@@ -43,10 +47,11 @@ define(function(require) {
       }
     });
 
-    //Fetch of the history
+    /* Fetch and store UI elements */
     initGui();
 
-    if (!window.top.sugar.environment.sharedId) {      
+    //Fetch of the history if not starting shared
+    if (!window.top.sugar.environment.sharedId) {
       activity.getDatastoreObject().loadAsText(function(error, metadata, jsonData) {
         var data = JSON.parse(jsonData);
         if (data !== undefined) {
@@ -55,9 +60,9 @@ define(function(require) {
       });
     }
 
-    // Launched with a shared id, activity is already shared
+    // If starting in shared mode, we disable undo/redo
     if (window.top.sugar.environment.sharedId) {
-      PaintApp.data.isHost = false
+      PaintApp.data.isHost = false;
       PaintApp.buttons.undoButton.hideGui();
       PaintApp.buttons.redoButton.hideGui();
       PaintApp.displayUndoRedoButtons();
@@ -68,13 +73,13 @@ define(function(require) {
 
 });
 
-
+/* Enabling an activity to be shared with the presenceObject */
 function shareActivity() {
   var activity = PaintApp.libs.activity;
   PaintApp.data.presence = activity.getPresenceObject(function(error, presence) {
     // Unable to join
     if (error) {
-      console.log("error")
+      console.log("error");
       return;
     }
 
@@ -83,7 +88,7 @@ function shareActivity() {
 
     // Store settings
     userSettings = presence.getUserInfo();
-    console.log("connected")
+    console.log("connected");
 
     // Not found, create a new shared activity
     if (!window.top.sugar.environment.sharedId) {
@@ -92,13 +97,13 @@ function shareActivity() {
 
     // Show a disconnected message when the WebSocket is closed.
     presence.onConnectionClosed(function(event) {
-      console.log(event)
+      console.log(event);
       console.log("Connection closed");
     });
 
     // Display connection changed
     presence.onSharedActivityUserChanged(function(msg) {
-      PaintApp.onSharedActivityUserChanged(msg)
+      PaintApp.onSharedActivityUserChanged(msg);
     });
 
     // Handle messages received

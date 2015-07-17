@@ -1,4 +1,8 @@
-Thanks to
+Made by Michaël Ohayon for the Google Summer of Code 2015
+
+You should look at js/activity.js and js/modes/pen.js to see how to add a tool to the project.
+
+##Icons
 
 * https://thenounproject.com/search/?q=heart&i=187
 * https://thenounproject.com/search/?q=square&i=12986

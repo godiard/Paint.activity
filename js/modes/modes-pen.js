@@ -1,21 +1,26 @@
-define([], function() {
+/* Pen mode is made to draw points and lines */
+
+define([], function () {
 
   function initGui() {
     PaintApp.elements.penButton = document.getElementById('pen-button');
-    PaintApp.paletteModesButtons.push(PaintApp.elements.penButton)
-    PaintApp.elements.penButton.addEventListener("click", function() {
+    PaintApp.paletteModesButtons.push(PaintApp.elements.penButton);
+    PaintApp.elements.penButton.addEventListener('click', function () {
       PaintApp.paletteRemoveActiveClass();
       PaintApp.addActiveClassToElement(PaintApp.elements.penButton);
-      PaintApp.switchMode("Pen");
+      PaintApp.switchMode('Pen');
     });
   }
 
   var Pen = {
     initGui: initGui,
     point: undefined,
-    onMouseDown: function(event) {
+
+    onMouseDown: function (event) {
       PaintApp.modes.Pen.point = event.point;
-      var ctx = PaintApp.elements.canvas.getContext("2d");
+      var ctx = PaintApp.elements.canvas.getContext('2d');
+
+      /* We draw a single point on mouse down */
       ctx.beginPath();
       ctx.strokeStyle = PaintApp.data.color.fill;
       ctx.lineCap = 'round';
@@ -24,14 +29,15 @@ define([], function() {
       ctx.lineTo(event.point.x, event.point.y);
       ctx.stroke();
 
+      /* If the activity is shared, we send the point to everyone */
       if (PaintApp.data.isShared) {
         PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
           user: PaintApp.data.presence.getUserInfo(),
           content: {
-            action: "path",
+            action: 'path',
             data: {
               lineWidth: PaintApp.data.size,
-              lineCap: "round",
+              lineCap: 'round',
               strokeStyle: PaintApp.data.color.fill,
               from: {
                 x: event.point.x + 1,
@@ -43,14 +49,18 @@ define([], function() {
               }
             }
           }
-        })
+        });
       }
     },
-    onMouseDrag: function(event) {
+
+    onMouseDrag: function (event) {
       if (!PaintApp.modes.Pen.point) {
         return;
       }
-      var ctx = PaintApp.elements.canvas.getContext("2d");
+
+      var ctx = PaintApp.elements.canvas.getContext('2d');
+
+      /* We draw the move between points on mouse drag */
       ctx.beginPath();
       ctx.strokeStyle = PaintApp.data.color.fill;
       ctx.lineWidth = PaintApp.data.size;
@@ -58,14 +68,15 @@ define([], function() {
       ctx.lineTo(event.point.x, event.point.y);
       ctx.stroke();
 
+      /* If the activity is shared, we send the move to everyone */
       if (PaintApp.data.isShared) {
         PaintApp.data.presence.sendMessage(PaintApp.data.presence.getSharedInfo().id, {
           user: PaintApp.data.presence.getUserInfo(),
           content: {
-            action: "path",
+            action: 'path',
             data: {
               lineWidth: PaintApp.data.size,
-              lineCap: "round",
+              lineCap: 'round',
               strokeStyle: PaintApp.data.color.fill,
               from: {
                 x: PaintApp.modes.Pen.point.x,
@@ -77,15 +88,14 @@ define([], function() {
               }
             }
           }
-        })
+        });
       }
-
       PaintApp.modes.Pen.point = event.point;
     },
-    onMouseUp: function(event) {
+
+    onMouseUp: function (event) {
       PaintApp.saveCanvas();
     }
-  }
-
+  };
   return Pen;
-})
+});

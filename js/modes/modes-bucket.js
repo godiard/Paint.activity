@@ -122,7 +122,11 @@ define([], function() {
           user: PaintApp.data.presence.getUserInfo(),
           content: {
             action: "toDataURL",
-            data: PaintApp.elements.canvas.toDataURL()
+            data: {
+              width: PaintApp.elements.canvas.width
+              width: PaintApp.elements.canvas.height
+                src: PaintApp.elements.canvas.toDataURL()
+            }
           }
         })
       }

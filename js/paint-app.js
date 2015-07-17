@@ -241,17 +241,17 @@ define([], function() {
         PaintApp.clearCanvas()
         var img = new Image()
         img.onload = function() {
-          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0);
+          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0, PaintApp.data.width, PaintApp.data.height);
         }
-        img.src = msg.content.data
+        img.src = msg.content.data.src
         break;
       case "toDataURL":
         PaintApp.clearCanvas()
         var img = new Image()
         img.onload = function() {
-          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0);
+          PaintApp.elements.canvas.getContext("2d").drawImage(img, 0, 0, PaintApp.data.width, PaintApp.data.height);
         }
-        img.src = msg.content.data
+        img.src = msg.content.data.src
         break;
       case "clearCanvas":
         PaintApp.clearCanvas()
@@ -275,7 +275,11 @@ define([], function() {
         user: PaintApp.data.presence.getUserInfo(),
         content: {
           action: "entranceToDataURL",
-          data: PaintApp.elements.canvas.toDataURL()
+          data: {
+            width: PaintApp.elements.canvas.width
+            width: PaintApp.elements.canvas.height
+            src: PaintApp.elements.canvas.toDataURL()
+          }
         }
       })
     }

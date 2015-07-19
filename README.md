@@ -1,6 +1,6 @@
 Made by Michaël Ohayon for the Google Summer of Code 2015
 
-You should look at js/activity.js and js/modes/pen.js to see how to add a tool to the project.
+You should look at js/activity.js and js/modes/modes-pen.js to see how to add a tool to the project.
 
 ##Icons
 
